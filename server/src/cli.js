@@ -63,7 +63,7 @@ const submitAssessment = (
   meritEngine.recordAssessment(
     assessorId,
     "/assessments/quality",
-    "KEPT",
+    judgment,
     stake,
   );
 
