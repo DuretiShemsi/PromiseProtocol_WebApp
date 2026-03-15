@@ -1,4 +1,4 @@
-const Promise = require("../models/Promise");
+const PromiseModel = require("../models/PromiseModel");
 const Assessment = require("./Assessment");
 const {
   savePromise,
@@ -9,15 +9,20 @@ const {
   getAssessmentSummary,
 } = require("./Storage");
 
+// TODO (Tech Debt): Refactor assessment, merit, and ledger logic. 
+  // 'stake' is now an object { type, amount, currency, status }. 
+  // Passing this object into recordAssessment, slashStake, or doing math (stake * 2) will cause NaN/type errors.
+
 const createPromise = (promiserId, domain, objective, days, stakeType, stakeAmount) => {
-  const promise = new Promise(
+  const promise = new PromiseModel(
     promiserId,
     ["*"],
     domain,
     objective,
     days,
     ["Success metric TBD"],
-    {type: stakeType, amount: stakeAmount}
+    stakeType,
+    stakeAmount
   );
   savePromise(promise);
   console.log(`✓ Promise created: ${promise.id}`);
@@ -68,6 +73,8 @@ const submitAssessment = (
   );
 
   // Handle credit flow
+  // TODO (Tech Debt): Refactor ledger math. 'stake' is now an object { type, amount, currency, status }, not a primitive number. 
+  // Attempting to multiply the object (e.g., stake * 2) will result in NaN. Must update to use stake.amount and handle 'reputational' nulls.
   if (judgment === "KEPT") {
     creditLedger.reward(assessorId, stake * 2); // reward for honest assessment
     console.log(
