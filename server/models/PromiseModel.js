@@ -44,7 +44,7 @@ class PromiseModel {
     }
 
     if (stakeType === 'financial') {
-      if (typeof stakeAmount !== 'number' || stakeAmount < 0) {
+      if (typeof stakeAmount !== 'number' || stakeAmount <= 0) {
         throw new Error("Invalid stake amount, number must be positive");
       }
       return { 
