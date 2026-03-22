@@ -27,9 +27,8 @@ describe("API Functions", () => {
 		];
 		mockedAxios.get.mockResolvedValue({ data: mockResData });
 
-		getPromises().then((res) => {
-			expect(res).toEqual(mockResData);
-		});
+		const res = await getPromises();
+		expect(res).toEqual(mockResData);
 	});
 
 	test("POST /api/promises", async () => {
@@ -45,9 +44,8 @@ describe("API Functions", () => {
 		const mockRes = { data: mockReq, status: 201 };
 		mockedAxios.post.mockResolvedValue(mockRes);
 
-		createPromise(mockReq).then((res) => {
-			expect(res).toEqual(mockRes.data);
-		});
+		const res = await createPromise(mockReq);
+		expect(res).toEqual(mockRes.data);
 	});
 
 	test("GET /api/assessments", async () => {
@@ -64,9 +62,8 @@ describe("API Functions", () => {
 		];
 		mockedAxios.get.mockResolvedValue({ data: mockResData });
 
-		getAssessments().then((res) => {
-			expect(res).toEqual(mockResData);
-		});
+		const res = await getAssessments();
+		expect(res).toEqual(mockResData);
 	});
 
 	test("POST /api/assessments", async () => {
@@ -80,9 +77,8 @@ describe("API Functions", () => {
 		const mockRes = { data: mockReq, status: 201 };
 		mockedAxios.post.mockResolvedValue(mockRes);
 
-		submitAssessment(mockReq).then((res) => {
-			expect(res).toEqual(mockRes.data);
-		});
+		const res = await submitAssessment(mockReq);
+		expect(res).toEqual(mockRes.data);
 	});
 });
 
@@ -92,7 +88,7 @@ describe("Error handling", () => {
 		mockedAxios.get.mockRejectedValue(mockRes);
 
 		try {
-			await getAssessments();
+			await getPromises();
 			throw new Error("Did not throw error");
 		} catch (error) {
 			expect(error.status).toBe(500);
