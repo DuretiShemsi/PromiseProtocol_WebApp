@@ -97,7 +97,7 @@ describe('API Functions', () => {
 
 describe('Error handling', () => {
   test('GET /api/promises', async () => {
-    httpService.get.mockRejectedValue({ status: 500 });
+    httpService.get.mockRejectedValue({ response: { status: 500 } });
     try {
       await getPromises();
       throw new Error('Did not throw error');
@@ -107,7 +107,7 @@ describe('Error handling', () => {
   });
 
   test('POST /api/promises', async () => {
-    httpService.post.mockRejectedValue({ status: 400 });
+    httpService.post.mockRejectedValue({ response: { status: 400 } });
     try {
       await createPromise({});
       throw new Error('Did not throw error');
@@ -117,7 +117,7 @@ describe('Error handling', () => {
   });
 
   test('GET /api/assessments', async () => {
-    httpService.get.mockRejectedValue({ status: 500 });
+    httpService.get.mockRejectedValue({ response: { status: 500 } });
     try {
       await getAssessments();
       throw new Error('Did not throw error');
@@ -127,7 +127,7 @@ describe('Error handling', () => {
   });
 
   test('POST /api/assessments', async () => {
-    httpService.post.mockRejectedValue({ status: 400 });
+    httpService.post.mockRejectedValue({ response: { status: 400 } });
     try {
       await submitAssessment({});
       throw new Error('Did not throw error');
