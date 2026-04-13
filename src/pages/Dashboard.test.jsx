@@ -34,6 +34,18 @@ const mockPromises = [
     status: 'pending',
     createdAt: '2026-04-02T00:00:00.000Z',
   },
+  {
+    id: 'prm_003',
+    promiserId: 'other_user_999',
+    promiseeScope: 'individual',
+    domain: 'Marketing',
+    objective: 'This belongs to another user',
+    timeline: 7,
+    successCriteria: 'Should not appear',
+    stake: { type: 'reputational', amount: null, status: 'held' },
+    status: 'pending',
+    createdAt: '2026-04-03T00:00:00.000Z',
+  },
 ];
 
 const mockAssessments = [
@@ -78,6 +90,23 @@ describe('Dashboard', () => {
     ).toBeInTheDocument();
   });
 
+  test('only shows promises belonging to the current user', async () => {
+    getPromises.mockResolvedValue(mockPromises);
+    getAssessments.mockResolvedValue(mockAssessments);
+
+    render(<Dashboard />);
+
+    await waitFor(() => {
+      expect(
+        screen.getByText('Build the dashboard screen')
+      ).toBeInTheDocument();
+    });
+
+    expect(
+      screen.queryByText('This belongs to another user')
+    ).not.toBeInTheDocument();
+  });
+
   test('displays correct counts for total, kept, and broken', async () => {
     getPromises.mockResolvedValue(mockPromises);
     getAssessments.mockResolvedValue(mockAssessments);
@@ -90,6 +119,19 @@ describe('Dashboard', () => {
 
     const allOnes = screen.getAllByText('1');
     expect(allOnes).toHaveLength(2);
+  });
+
+  test('derives promise status from linked assessment judgment', async () => {
+    getPromises.mockResolvedValue(mockPromises);
+    getAssessments.mockResolvedValue(mockAssessments);
+
+    render(<Dashboard />);
+
+    await waitFor(() => {
+      expect(screen.getByText('Kept')).toBeInTheDocument();
+    });
+
+    expect(screen.getByText('Broken')).toBeInTheDocument();
   });
 
   test('renders empty state when no promises exist', async () => {

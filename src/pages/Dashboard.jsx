@@ -3,6 +3,8 @@ import { getPromises, getAssessments } from '../services/api';
 import RecentPromiseCard from '../components/RecentPromiseCard';
 import styles from './Dashboard.module.css';
 
+const CURRENT_USER = 'dev_user_001'; // Epic 4 Auth stub
+
 export default function Dashboard() {
   const [promises, setPromises] = useState([]);
   const [assessments, setAssessments] = useState([]);
@@ -12,12 +14,24 @@ export default function Dashboard() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const [promisesData, assessmentsData] = await Promise.all([
+        const [allPromises, allAssessments] = await Promise.all([
           getPromises(),
           getAssessments(),
         ]);
-        setPromises(promisesData);
-        setAssessments(assessmentsData);
+
+        // Filter to current user's promises only
+        const myPromises = allPromises.filter(
+          (p) => p.promiserId === CURRENT_USER
+        );
+        const myPromiseIds = myPromises.map((p) => p.id);
+
+        // Filter assessments to only those against the current user's promises
+        const myAssessments = allAssessments.filter((a) =>
+          myPromiseIds.includes(a.promiseId)
+        );
+
+        setPromises(myPromises);
+        setAssessments(myAssessments);
       } catch (err) {
         setError('Failed to load dashboard data. Please try again.');
       } finally {
@@ -30,9 +44,21 @@ export default function Dashboard() {
   const keptCount = assessments.filter((a) => a.judgment === 'KEPT').length;
   const brokenCount = assessments.filter((a) => a.judgment === 'BROKEN').length;
   const totalCount = promises.length;
+
   const recent = [...promises]
     .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
     .slice(0, 3);
+
+  // Derive status from assessments for each recent promise
+  const recentWithDerivedStatus = recent.map((promise) => {
+    const linkedAssessment = assessments.find(
+      (a) => a.promiseId === promise.id
+    );
+    return {
+      ...promise,
+      status: linkedAssessment ? linkedAssessment.judgment : promise.status,
+    };
+  });
 
   if (loading) {
     return (
@@ -118,7 +144,7 @@ export default function Dashboard() {
             </p>
           </div>
         ) : (
-          recent.map((promise) => (
+          recentWithDerivedStatus.map((promise) => (
             <RecentPromiseCard key={promise.id} promise={promise} />
           ))
         )}
