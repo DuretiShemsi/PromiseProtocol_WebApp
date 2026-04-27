@@ -117,6 +117,7 @@ describe('CreatePromise', () => {
 
     await user.type(screen.getByLabelText('Commitment objective'), 'Submit successful form');
     await user.type(screen.getByLabelText('Commitment recipient name'), 'Jordan');
+    await user.selectOptions(screen.getByLabelText('Commitment scope'), 'individual');
     await user.type(screen.getByLabelText('Domain'), 'Product');
     await user.type(screen.getByLabelText('Timeline (days)'), '14');
     await user.type(screen.getByLabelText('Success criteria'), 'Backend returns 201');
@@ -135,6 +136,7 @@ describe('CreatePromise', () => {
 
     await user.type(screen.getByLabelText('Commitment objective'), 'Submit failing form');
     await user.type(screen.getByLabelText('Commitment recipient name'), 'Jordan');
+    await user.selectOptions(screen.getByLabelText('Commitment scope'), 'public');
     await user.type(screen.getByLabelText('Domain'), 'Product');
     await user.type(screen.getByLabelText('Timeline (days)'), '14');
     await user.type(screen.getByLabelText('Success criteria'), 'Backend returns 500');

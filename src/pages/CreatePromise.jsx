@@ -64,6 +64,8 @@ export default function CreatePromise() {
   };
 
   const buildPayload = () => {
+    // PP-008 requires collecting promiseeName in the UI, but the current
+    // backend contract for POST /api/promises does not accept that field yet.
     const payload = {
       promiserId: CURRENT_USER,
       promiseeScope: form.promiseeScope,
